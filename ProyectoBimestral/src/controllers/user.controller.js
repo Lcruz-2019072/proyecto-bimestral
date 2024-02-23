@@ -57,7 +57,7 @@ export const getUserById = async (req, res) => {
         res.status(200).json(user);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error en el servidor' });
+        res.status(500).json({ message: 'Error al encontrar el ID' });
     }
 };
 
