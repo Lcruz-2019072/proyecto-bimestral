@@ -17,7 +17,7 @@ export const checkPassword = async (password, hash) => {
         throw err;
     }
 };
-
+    
 export const checkUpdate = (data, userId) => {
     if (userId) {
         if (
@@ -41,3 +41,4 @@ export const checkUpdate = (data, userId) => {
         return true;
     }
 };
+

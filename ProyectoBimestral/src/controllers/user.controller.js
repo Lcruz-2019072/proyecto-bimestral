@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import { validateJwt } from "../middlewares/validate-jwt.js"
 
 // Función para registrar un nuevo usuario
 export const registerUser = async (req, res) => {
@@ -30,24 +31,22 @@ export const loginUser = async (req, res) => {
     });
 
     if (userExists) {
-      return res.status(400).json({ message: "ASDKLASDNKSADLKASDKLH" });
+      return res.status(400).send({ message: "klk" });
     }
 
     if (email && username) {
-      return res
-        .status(404)
-        .json({ message: "Solo puedes iniciar sesion con Username o Email " });
+      return res.status(404).send({ message: "Solo puedes iniciar sesion con Username o Email " });
     }
     if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).send({ message: "Usuario no encontrado" });
     }
     if (user.password !== password) {
-      return res.status(401).json({ message: "Credenciales inválidas" });
+      return res.status(401).send({ message: "Credenciales inválidas" });
     }
-    res.status(200).json({ message: "Inicio de sesión exitoso" });
+    res.status(200).send({ message: "Inicio de sesión exitoso" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error en el servidor" });
+    res.status(500).send({ message: "Error en el servidor" });
   }
 };
 
