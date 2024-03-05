@@ -23,8 +23,7 @@ app.use(helmet()) //Aplica capa de seguridad
 app.use(morgan('dev')) //Crea logs de solicitudes al servidor HTTP
 
 //Declaración de rutas
-app.use(userRoutes)
-app.use(categoryRoutes)
+
 app.use('/user', userRoutes)
 app.use('/category', categoryRoutes)
 
