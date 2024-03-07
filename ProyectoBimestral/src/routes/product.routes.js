@@ -11,7 +11,7 @@ api.put('/updateP/:id',/*[validateJwt, isAdmin],*/ updateProduct)
 api.delete('/deleteP/:id',/*[validateJwt, isAdmin],*/ deleteProduct)
 api.get('/restockP',/*[validateJwt, isAdmin],*/ restockProduct)
 api.get('/getP', getProduct)
-api.get('/searchP/:search', searchProduct)
+api.get('/restockP/:search', searchProduct)
 
 
 export default api

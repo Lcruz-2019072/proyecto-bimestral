@@ -1,6 +1,5 @@
 'use strict'
 
-import Category from '../models/category.model.js'
 import Product from '../models/product.model.js'
 import { checkUpdate } from '../utils/validator.js'
 
@@ -27,7 +26,7 @@ export const createProduct = async (req, res)=>{
         return res.send({message: `Registered successfully,${product.nameP} was registered`})
     } catch (error) {
         console.error(error)
-        return res.status(500).send({message: 'Error registering product', error: error})
+        return res.status(500).send({message: 'Error al registrar el producto', error: error})
     }
 }
 
@@ -81,7 +80,7 @@ export const getProduct = async (req, res)=>{
 export const searchProduct = async (req, res)=>{
     try {
         let {search} = req.params
-        let product = await Product.find({_id: search}).populate('Category', ['nameC'])
+        let product = await Product.find({_id: search}).populate('category', ['nameC'])
         return res.send({ product })
     } catch (error) {
         console.error(error)

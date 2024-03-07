@@ -9,8 +9,10 @@ const categorySchema = Schema({
     description: {
         type: String, 
         required: true
-    }
-
+    },
+    
+},{
+    versionKey: false
 })
 
 export default model('category', categorySchema)

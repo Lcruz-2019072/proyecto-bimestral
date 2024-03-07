@@ -5,15 +5,11 @@ import User from '../models/user.model.js'
 
 export const validateJwt = async(req, res, next) =>{
     try {
-        //varible de entorno
         let secretKey = process.env.SECRET_KEY  
-        //obtener el token
         let {token} = req.headers
-        //verificar si viene
         if(!token) return res.status(401).send({message: 'Unauthorized'})
-        //obtner el uid del usuario
         let {uid} = jwt.verify(token, secretKey)
-        //validar si aun existe en la Base de datos
+
         let user = await User.findOne({_id: uid})
         if(!user)  return res.status(404).send({message: 'User not found - Unauthorized '})
         req.user = user

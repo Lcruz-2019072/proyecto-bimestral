@@ -1,16 +1,24 @@
-'use strict'
-import {Schema, model} from 'mongoose'
+import { Schema, model } from "mongoose";
 
-const billSchema = Schema({
-    dateB: {
-        type: Date,
-        default: Date.now,
-        required: true
-    },
-
-    userB: {
-        type: Schema.Types.ObjectId,
-        ref: 'user',
-        required: true
-    }
+const shoppingCartSchema = Schema({
+  client: {
+    type: Schema.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  date: {
+    type: Date,
+    required: true,
+  },
+  product: {
+    type: Schema.ObjectId,
+    ref: 'product',
+    required: true
+  },
+  quantity: {
+    type: Number,
+    required: true
+  }
 })
+
+export default model('shoppingcart', shoppingCartSchema)

@@ -4,7 +4,7 @@ import Category  from '../models/category.model.js';
 export const createCategory = async (req, res) => {
     try {
         const { nameC, description } = req.body; // Usamos req.params para acceder a los datos de la URL
-        const existingCategory = await Category.findOne({ nameCategory });
+        const existingCategory = await Category.findOne({ nameC });
         if (existingCategory) {
             return res.status(400).send({message: 'La categoria ya existe'});
         }

@@ -10,8 +10,8 @@ api.post('/login', loginUser);
 
 
 api.get('/getall', getUsers);
-api.get('/getid/:id', /*[validateJwt, isAdmin],*/getUserById);
-api.put('/update/:id',/*[validateJwt, isAdmin],*/ updateUser);
-api.delete('/delete/:id',/*[validateJwt, isAdmin],*/ deleteUser);
+api.get('/getid/:id',/* [validateJwt, isAdmin]*/getUserById);
+api.put('/updateU/:id',/*[validateJwt, isAdmin],*/ updateUser);
+api.delete('/deleteU/:id',/*[validateJwt, isAdmin],*/ deleteUser);
 
 export default api;
