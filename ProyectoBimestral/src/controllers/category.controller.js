@@ -3,25 +3,25 @@ import Category  from '../models/category.model.js';
 // Función para crear una nueva categoría
 export const createCategory = async (req, res) => {
     try {
-        const { name, description } = req.body; // Usamos req.params para acceder a los datos de la URL
-        const existingCategory = await Category.findOne({ name });
+        const { nameC, description } = req.body; // Usamos req.params para acceder a los datos de la URL
+        const existingCategory = await Category.findOne({ nameCategory });
         if (existingCategory) {
-            return res.status(400).json({message: 'La categoria ya existe'});
+            return res.status(400).send({message: 'La categoria ya existe'});
         }
-        const category = new Category({ name, description });
+        const category = new Category({ nameC, description });
         await category.save();
-        res.status(201).json(category);
+        res.status(201).send(category);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).send({ message: error.message });
     }
 };
 
 export const getCategories = async (req, res) => {
     try {
         const categories = await Category.find();
-        res.status(200).json(categories);
+        res.status(200).send(categories);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).send({ message: error.message });
     }
 };
 
@@ -31,11 +31,11 @@ export const getCategoryById = async (req, res) => {
         const { id } = req.params;
         const category = await Category.findById(id);
         if (!category) {
-            return res.status(404).json({ message: "Category not found" });
+            return res.status(404).send({ message: "Category not found" });
         }
-        res.status(200).json(category);
+        res.status(200).send(category);
     } catch (error) {
-        res.status(500).json({ message: 'Error al encontrar el ID' });
+        res.status(500).send({ message: 'Error al el ID' });
     }
 };
 
@@ -43,14 +43,14 @@ export const getCategoryById = async (req, res) => {
 export const updateCategory = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description } = req.body;
-        const updatedCategory = await Category.findByIdAndUpdate(id, { name, description }, { new: true });
+        const { nameC, description } = req.body;
+        const updatedCategory = await Category.findByIdAndUpdate(id, { nameC, description }, { new: true });
         if (!updatedCategory) {
-            return res.status(404).json({ message: "Category not found" });
+            return res.status(404).send({ message: "Category not found" });
         }
-        res.status(200).json(updatedCategory);
+        res.status(200).send(updatedCategory);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).send({ message: error.message });
     }
 };
 
@@ -60,10 +60,10 @@ export const deleteCategory = async (req, res) => {
         const { id } = req.params;
         const deletedCategory = await Category.findByIdAndDelete(id);
         if (!deletedCategory) {
-            return res.status(404).json({ message: "Category not found" });
+            return res.status(404).send({ message: "Category not found" });
         }
-        res.status(200).json({ message: "Category deleted successfully" });
+        res.status(200).send({ message: "Category deleted successfully" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).send({ message: error.message });
     }
 };

@@ -17,3 +17,26 @@ export const checkPassword = async(password, hash)=>{
         return error
     }
 }
+export const checkUpdate = (data, id)=>{
+    if(id){
+        if(Object.entries(data).length === 0 ){
+            return false
+        }
+        return true
+    }else{
+        if(Object.entries(data).length === 0 ||
+            data.description ||
+            data.description == ''||
+            data.trademark ||
+            data.trademark ==''){
+            return false
+        }
+        if (Object.entries(data).length === 0 ||
+            data.password ||
+            data.password == '' ) {
+            return false
+        }
+        return true
+    }
+    
+}
