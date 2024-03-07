@@ -1,8 +1,9 @@
 'use strict'
 
 import jwt from 'jsonwebtoken'
+import 'dotenv/config'
 
-const secretKey = '@ProyectoBimestral@'
+const secretKey = process.env.SECRET_KEY 
 
 export const generateJwt = async(payload)=>{
     try{

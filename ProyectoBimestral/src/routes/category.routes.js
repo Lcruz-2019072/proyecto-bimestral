@@ -1,21 +1,14 @@
 import express from 'express';
-import {createCategory, getCategories, getCategoryById, updateCategory, deleteCategory} from '../controllers/category.controller.js';
+import {createCategory, getCategories, updateCategory, deleteCategory} from '../controllers/category.controller.js';
+import { validateJwt, isAdmin, isClient } from '../middlewares/validate-jwt.js';
 
 const api = express.Router();
 
-// Ruta para crear una nueva categoría
-api.post('/registerC', createCategory);
+api.get('/getallC', [isAdmin, isClient],getCategories);
 
-// Ruta para obtener todas las categorías
-api.get('/getallC', getCategories);
 
-// Ruta para obtener una categoría por su ID
-api.get('/getidC/:id', getCategoryById);
-
-// Ruta para actualizar una categoría por su ID
-api.put('/updateC/:id', updateCategory);
-
-// Ruta para eliminar una categoría por su ID
-api.delete('/deleteC/:id', deleteCategory);
+api.post('/registerC', [validateJwt, isAdmin] ,createCategory);
+api.put('/updateC/:id', [validateJwt, isAdmin] ,updateCategory);
+api.delete('/deleteC/:id', [validateJwt, isAdmin] ,deleteCategory);
 
 export default api;
