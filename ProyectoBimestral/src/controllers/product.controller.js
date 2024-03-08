@@ -1,8 +1,7 @@
-
 import Product from '../models/product.model.js'
 import Category from '../models/category.model.js'
 import Bill from '../models/bill.model.js'
-import { checkUpdateProduct } from '../utils/validator.js'
+
 
 
 
@@ -29,8 +28,6 @@ export const updateProduct = async(req, res)=>{
     try {
         let {id} = req.params
         let data = req.body
-        let update =  await checkUpdateProduct(data, id)
-        if(!update) return res.status(400).send({message: 'Have submitted some data that cannot be update or missing data'})
         let updateProduct = await Product.findOneAndUpdate(
             { _id: id },
             data,
@@ -72,23 +69,10 @@ export const deleteProduct = async(req, res)=>{
     }
 
 }
-
-
-export const searchProduct = async (req, res)=>{
-    try {
-        let {search} = req.params
-        let product = await Product.find({_id: search}).populate('category', ['nameCategory'])
-        return res.send({ product })
-    } catch (error) {
-        console.error(error)
-        return res.status(500).send({ message: 'Error seraching product', error: error })
-    }
-
-}
 export const searchNameP = async (req, res)=>{
     try {
         let {name} = req.body
-        let product = await Product.findOne({nameProduct: name}).populate('category', ['nameCategory'])
+        let product = await Product.findOne({nameProduct: {$regex: name}}).populate('category', ['nameCategory'])
         return res.send({ product })
     } catch (error) {
         console.error(error)

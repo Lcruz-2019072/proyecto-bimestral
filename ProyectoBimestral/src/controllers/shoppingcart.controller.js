@@ -1,12 +1,9 @@
-
 import PDFDocument from 'pdfkit'
 import fs from 'fs'
 import Cart from '../models/shoppingcart.model.js'
 import Product from '../models/product.model.js'    
 import Bill from '../models/bill.model.js'
 import {checkCart} from '../utils/validator.js'
-
-
 
 
 export const generateShoppingCart = async (req, res) => {
@@ -99,7 +96,7 @@ export const generateShoppingCart = async (req, res) => {
             let saveBill = await bill.save()
             await Cart.deleteOne({ _id: cart._id })
             await generatePDF(saveBill._id)
-            return res.send({ message: 'Successful Buy.', bill: saveBill })
+            return res.send({ message: 'La compra se completo', bill: saveBill })
         }else{
             return res.status(400).send({ message: 'Escribe BUY para terminar tu compra' })
         }
@@ -117,26 +114,29 @@ export const generatePDF = async (id) => {
         let doc = new PDFDocument()
         let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' }
         let formattedDate = bill.date.toLocaleDateString('es-ES', dateOptions)
-        doc.fontSize(20).text('Bill Kinal Sales', { align: 'center' }).moveDown()
+        doc.fontSize(40).text('Bill Kinal Sales', { align: 'center' }).moveDown()
 
-        doc.fontSize(14).text(`Bill No.: ${bill._id}`, { align: 'left' }).moveDown()
-        doc.fontSize(14).text(`People: ${bill.user.name} ${bill.user.surname}`, { align: 'left' }).moveDown()
-        doc.fontSize(14).text(`User: ${bill.user.username}`, { align: 'left' }).moveDown()
-        doc.fontSize(14).text(`Date: ${formattedDate}`, { align: 'left' }).moveDown()
+        doc.fontSize(21).text(`Numero de factura: ${bill._id}`, { align: 'left' }).moveDown()
+        doc.fontSize(21).text(`Nombre y Apellido: ${bill.user.name} ${bill.user.surname}`, { align: 'left' }).moveDown()
+        doc.fontSize(21).text(`Usuario: ${bill.user.username}`, { align: 'left' }).moveDown()
+        doc.fontSize(21).text(`Fecha: ${formattedDate}`, { align: 'left' }).moveDown()
 
         doc.fontSize(16).text('Items:', { align: 'left' }).moveDown()
         for (let item of bill.items) {
-            doc.fontSize(14).text(`Product: ${item.product.nameProduct}, Quantity: ${item.quantity}, Price: ${item.price}`, { align: 'left' }).moveDown()
+            doc.fontSize(14).text(`Producto: ${item.product.nameProduct},
+                                    Cantidad: ${item.quantity}, 
+                                    Precio: ${item.price}`, 
+                                    { align: 'left' }).moveDown()
         }
-        doc.fontSize(14).text(`Total Amount: ${bill.totalAmount}`, { align: 'left' }).moveDown()
+        doc.fontSize(14).text(`Total: ${bill.totalAmount}`, { align: 'left' }).moveDown()
  
-        let pdfPath = `BillSale_${bill._id}_${bill.user.username}.pdf`
+        let pdfPath = `${bill.user.username}.pdf`
         doc.pipe(fs.createWriteStream(pdfPath))
         doc.end()
 
         return pdfPath
     } catch (error) {
-        console.error('Error generating invoice PDF:', error)
+        console.error('Error al genearar el PDF:', error)
     }
 }
 
@@ -144,19 +144,20 @@ export const generatePDFID = async (req, res) => {
     try {
         let {id} = req.params
         let bill = await Bill.findOne({_id: id}).populate('user').populate('items.product')
-        if(!bill) return res.status(404).send({message: 'BILL NOT FOUND'})
+        if(!bill) return res.status(404).send({message: 'la factura no fue encontrada'})
         const doc = new PDFDocument()
         let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' }
         let formattedDate = bill.date.toLocaleDateString('es-ES', dateOptions)
         
-        doc.fontSize(20).text('Bill Kinal Sales', { align: 'center' }).moveDown()
+        doc.fontSize(20).text('Factura', { align: 'center' }).moveDown()
 
-        doc.fontSize(14).text(`Bill No.: ${bill._id}`, { align: 'left' }).moveDown()
-        doc.fontSize(14).text(`People: ${bill.user.name} ${bill.user.surname}`, { align: 'left' }).moveDown()
+        doc.fontSize(14).text(`No.factura: ${bill._id}`, { align: 'left' }).moveDown()
+        doc.fontSize(14).text(`Name: ${bill.user.name} `, { align: 'left' }).moveDown()
+        doc.fontSize(14).text(`Surname: ${bill.user.surname}`, {align: 'left'}).moveDown()
         doc.fontSize(14).text(`User: ${bill.user.username}`, { align: 'left' }).moveDown()
         doc.fontSize(14).text(`Date: ${formattedDate}`, { align: 'left' }).moveDown()
 
-        doc.fontSize(16).text('Items:', { align: 'left' }).moveDown()
+        doc.fontSize(16).text('Sus productos:', { align: 'left' }).moveDown()
         for (const item of bill.items) {
             doc.fontSize(14).text(`Product: ${item.product.nameProduct}, Quantity: ${item.quantity}, Price: ${item.price}`, { align: 'left' }).moveDown()
         }

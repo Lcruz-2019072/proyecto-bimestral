@@ -55,7 +55,7 @@ export const checkCart = async (data, quantity, stock ) => {
 export const checkUpdateProduct = async (data, id) => {
     if (id) {
         if (Object.entries(data).length === 0 ||
-            data.brand ||
+            data.nameProduct ||
             data.category) {
             return false
         }
