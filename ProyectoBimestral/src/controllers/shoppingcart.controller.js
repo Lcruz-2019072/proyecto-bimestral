@@ -152,14 +152,17 @@ export const generatePDFID = async (req, res) => {
         doc.fontSize(20).text('Factura', { align: 'center' }).moveDown()
 
         doc.fontSize(14).text(`No.factura: ${bill._id}`, { align: 'left' }).moveDown()
-        doc.fontSize(14).text(`Name: ${bill.user.name} `, { align: 'left' }).moveDown()
-        doc.fontSize(14).text(`Surname: ${bill.user.surname}`, {align: 'left'}).moveDown()
-        doc.fontSize(14).text(`User: ${bill.user.username}`, { align: 'left' }).moveDown()
-        doc.fontSize(14).text(`Date: ${formattedDate}`, { align: 'left' }).moveDown()
+        doc.fontSize(14).text(`Nombre: ${bill.user.name} `, { align: 'left' }).moveDown()
+        doc.fontSize(14).text(`Apellido: ${bill.user.surname}`, {align: 'left'}).moveDown()
+        doc.fontSize(14).text(`Usuario: ${bill.user.username}`, { align: 'left' }).moveDown()
+        doc.fontSize(14).text(`Fecha: ${formattedDate}`, { align: 'left' }).moveDown()
 
         doc.fontSize(16).text('Sus productos:', { align: 'left' }).moveDown()
         for (const item of bill.items) {
-            doc.fontSize(14).text(`Product: ${item.product.nameProduct}, Quantity: ${item.quantity}, Price: ${item.price}`, { align: 'left' }).moveDown()
+            doc.fontSize(14).text(`Productos: ${item.product.nameProduct}, 
+                                    Cantidad: ${item.quantity}, 
+                                    Precio: ${item.price}`, 
+                                    { align: 'left' }).moveDown()
         }
         doc.fontSize(14).text(`Total Amount: ${bill.totalAmount}`, { align: 'left' }).moveDown()
  

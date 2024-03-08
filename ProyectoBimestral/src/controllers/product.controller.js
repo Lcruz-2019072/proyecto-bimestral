@@ -83,28 +83,9 @@ export const searchNameP = async (req, res)=>{
 
 export const watchItemsSelling = async (req, res) => {
     try {
-        let bestSell = await Bill.aggregate([
-            { $unwind: "$items" },
-            {
-                $group: {
-                    _id: "$items.product",
-                    totalQuantity: { $sum: "$items.quantity" }
-                }
-            },
-            { $sort: { totalQuantity: -1 } },
-            { $limit: 10 }
-        ])
+        let productsMostSold = await Product.find({}).sort({stock: 1});
 
-        let productsDetail = await Product.find({ _id: { $in: bestSell.map(item => item._id) } })
-
-        let sellingProdA = bestSell.map(item => {
-            let detail = productsDetail.find(product => product._id.toString() === item._id.toString())
-            return {
-                product: detail,
-                totalQuantity: item.totalQuantity
-            }
-        })
-        return res.send(sellingProdA)
+        return res.send(productsMostSold)
     } catch (error) {
         console.error(error)
         return res.status(500).send({ message: 'No found selling products', error: error })

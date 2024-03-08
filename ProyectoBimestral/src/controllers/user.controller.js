@@ -22,9 +22,9 @@ export const defaultUser = async (name, surname, username, password, phone, emai
       }
       let user = new User(data)
       await user.save()
-      return console.log('This user is created')
+      return console.log('Este usuario fue creado')
     } else{
-      return console.log('This user is default, already exist')
+      return console.log('The user ADMIN is now avaible')
     }
   } catch (error) {
     console.error(error)
@@ -41,10 +41,10 @@ export const registerUser = async(req, res) =>{
         data.password = await encrypt(data.password)
         let user = new User(data)
         await user.save()
-        return res.send({message: `Registered successfully,${user.username} was registered`})
+        return res.send({message: `El registro de ${user.username} fue completado`})
     } catch (error) {
         console.error(error)
-        return res.status(500).send({message: 'Failed add User', error: error})
+        return res.status(500).send({message: 'Error al agregar el usuario', error: error})
     }
 }
 
@@ -61,13 +61,13 @@ export const loginUser = async (req, res)=>{
                 role: user.role 
             }
             let token = await generateJwt(loggedUser)
-            return res.send({message: `Welcome ${loggedUser.username}`, loggedUser, token})
+            return res.send({message: `Bienvenido ${loggedUser.username}`, loggedUser, token})
         }
-        if(!user) return res.status(404).send({message: 'User not found'})
+        if(!user) return res.status(404).send({message: 'El usuario no fue encontrado'})
         
     } catch (error) {
         console.error(error)
-        return res.status(500).send({message: 'Error to login'})
+        return res.status(500).send({message: 'Error al iniciar sesion'})
         
     }
 }
@@ -77,7 +77,7 @@ export const updateUser = async (req, res) =>{
         let {id} = req.params 
         let data = req.body 
         let update =  checkUpdate(data, false)
-        if(!update) return res.status(400).send({message: 'Have submitted some data that cannot be update'})
+        if(!update) return res.status(400).send({message: 'Revisa tus datos , no se completo la actualizacion de datos'})
         let updateUser = await User.findOneAndUpdate(
             { _id: id },
             data,
@@ -88,8 +88,7 @@ export const updateUser = async (req, res) =>{
     } catch (error) {
         console.error(error)
         if(error.keyValue.username) return res.status(400).send({message: `username ${error.keyValue.username} is alredy taken ` })
-        return res.status(500).send({ message: 'Error updating' })
-        
+        return res.status(500).send({ message: 'Error al actualizacion'})
     }
 }
 
@@ -97,18 +96,16 @@ export const deleteUser = async(req, res) =>{
     try {
         let {id} = req.params
         let deletedAccount = await User.findOneAndDelete({_id: id})
-        if(!deletedAccount) return res.status(404).send({message: 'Account not found and not deleted'})
-        return res.send({message: `Account ${deletedAccount.username} deleted successfully`}) 
+        if(!deletedAccount) return res.status(404).send({message: 'No se encontro el Usuario y no se elimino'})
+        return res.send({message: `${deletedAccount.username} se borro tu Usuario`}) 
         
     } catch (error) {
         console.error(error)
-        return res.status(500).send({message: 'Error deleting account'})
+        return res.status(500).send({message: 'Error, no se elimino el Usuario'})
         
     }
 }
 
-
-// Función para obtener todos los usuarios
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find();
@@ -119,7 +116,7 @@ export const getUsers = async (req, res) => {
   }
 };
 
-// Función para obtener un usuario por su ID
+
 export const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
