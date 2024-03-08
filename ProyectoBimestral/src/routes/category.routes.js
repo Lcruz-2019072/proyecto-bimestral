@@ -4,8 +4,7 @@ import { validateJwt, isAdmin, isClient } from '../middlewares/validate-jwt.js';
 
 const api = express.Router();
 
-api.get('/getallC', [isAdmin, isClient],getCategories);
-
+api.get('/getallC', getCategories);
 
 api.post('/registerC', [validateJwt, isAdmin] ,createCategory);
 api.put('/updateC/:id', [validateJwt, isAdmin] ,updateCategory);

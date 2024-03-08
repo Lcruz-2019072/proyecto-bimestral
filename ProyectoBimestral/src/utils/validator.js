@@ -40,3 +40,27 @@ export const checkUpdate = (data, id)=>{
     }
     
 }
+
+export const checkCart = async (data, quantity, stock ) => {
+
+    if (!data  || 
+        stock === 0 ||
+        quantity > stock) {
+        return false
+        
+    }
+    return true
+}
+
+export const checkUpdateProduct = async (data, id) => {
+    if (id) {
+        if (Object.entries(data).length === 0 ||
+            data.brand ||
+            data.category) {
+            return false
+        }
+        return true
+    } else {
+        return false
+    }
+}

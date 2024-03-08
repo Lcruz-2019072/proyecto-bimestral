@@ -1,20 +1,20 @@
-'use strict'
+
 import { Schema, model } from "mongoose"; 
 
 const productSchema = Schema({
-    nameP: {
+    nameProduct: {
         type: String, 
         required: true
     }, 
-    descriptionP: {
+    descriptionProduct: {
         type: String, 
         required: true
     },
-    priceP: {
+    priceProduct: {
         type: Number, 
         required: true
     }, 
-    trademark: {
+    brand: {
         type: String, 
         required: true
     }, 
@@ -27,8 +27,9 @@ const productSchema = Schema({
         ref: 'category', 
         required: true
 
-    }
+    }, 
+}, {
+    versionKey: false 
 })
-
 
 export default model('product', productSchema)

@@ -1,32 +1,27 @@
-'use strict'
 
 import Product from '../models/product.model.js'
-import { checkUpdate } from '../utils/validator.js'
+import Category from '../models/category.model.js'
+import Bill from '../models/bill.model.js'
+import { checkUpdateProduct } from '../utils/validator.js'
 
 
-export const restockProduct = async(req, res) =>{
-    try {
-        let product = await Product.find({stock: 0})
-        if(product.length === 0) return res.status(400).send({message: 'No products with stock = 0 found'})
-        return res.send({message: 'Products with stock 0 found', product})
-
-    } catch (error) {
-        console.error(error)
-        return res.status(500).send({ message: 'Error searching for sold out products ', error: error })
-    }
-}
 
 export const createProduct = async (req, res)=>{
     try {
-
         let data = req.body
         console.log(data)
+        if(!data.category){
+            let categoryDefault = await Category.findOne({nameCategory: 'Default'})
+            data.category = categoryDefault._id
+        }
+        let existProduct = await Product.findOne({nameProduct: data.nameProduct})
+        if(existProduct) return res.status(401).send({message: 'This product is alredy exist'})
         let product = new Product(data)
         await product.save()
-        return res.send({message: `Registered successfully,${product.nameP} was registered`})
+        return res.send({message: `Registered successfully,${product.nameProduct} was registered`})
     } catch (error) {
         console.error(error)
-        return res.status(500).send({message: 'Error al registrar el producto', error: error})
+        return res.status(500).send({message: 'Error registering product', error: error})
     }
 }
 
@@ -34,40 +29,25 @@ export const updateProduct = async(req, res)=>{
     try {
         let {id} = req.params
         let data = req.body
-        let update =  checkUpdate(data, false)
-        if(!update) return res.status(400).send({message: 'Revisa tu data , no se pudo actualizar'})
+        let update =  await checkUpdateProduct(data, id)
+        if(!update) return res.status(400).send({message: 'Have submitted some data that cannot be update or missing data'})
         let updateProduct = await Product.findOneAndUpdate(
             { _id: id },
             data,
             {new: true} 
-        ).populate('category', ['nameC'])
-        if (!updateProduct) return res.status(401).send({ message: 'Producto no fue actualizado' })
+        ).populate('category', ['nameCategory'])
+        if (!updateProduct) return res.status(401).send({ message: 'Product not found' })
         return res.send({ message: 'Product  update', updateProduct })
     } catch (error) {
         console.error(error)
-        return res.status(500).send({ message: 'Error al actualizar' })
+        return res.status(500).send({ message: 'Error updating' })
     }
-}
-
-export const deleteProduct = async(req, res)=>{
-    try {
-        let {id} = req.params
-        let deletedProduct =  await Product.findOneAndDelete({_id: id})
-        if(!deletedProduct) return res.status(404).send({message: 'Product not found and not deleted'})
-        return res.send({message: `Product ${deletedProduct.nameP} deleted successfully`})
-        
-    } catch (error) {
-        console.error(error)
-        return res.status(500).send({ message: 'Error deleting Product', error: error })
-        
-    }
-
 }
 
 export const getProduct = async (req, res)=>{
     try {
         
-        let product = await Product.find()
+        let product = await Product.find().populate('category', ['nameCategory'])
         if(!product) return res.status(404).send({message: 'Product not found'})
         return res.send({product})
     } catch (error) {
@@ -77,14 +57,87 @@ export const getProduct = async (req, res)=>{
 }
 
 
+
+export const deleteProduct = async(req, res)=>{
+    try {
+        let {id} = req.params
+        let deletedProduct =  await Product.findOneAndDelete({_id: id})
+        if(!deletedProduct) return res.status(404).send({message: 'Product not found and not deleted'})
+        return res.send({message: `Product ${deletedProduct.nameProduct} deleted successfully`})
+        
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send({ message: 'Error deleting Product', error: error })
+        
+    }
+
+}
+
+
 export const searchProduct = async (req, res)=>{
     try {
         let {search} = req.params
-        let product = await Product.find({_id: search}).populate('category', ['nameC'])
+        let product = await Product.find({_id: search}).populate('category', ['nameCategory'])
         return res.send({ product })
     } catch (error) {
         console.error(error)
         return res.status(500).send({ message: 'Error seraching product', error: error })
     }
 
+}
+export const searchNameP = async (req, res)=>{
+    try {
+        let {name} = req.body
+        let product = await Product.findOne({nameProduct: name}).populate('category', ['nameCategory'])
+        return res.send({ product })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send({ message: 'Error seraching product', error: error })
+    }
+
+}
+
+export const watchItemsSelling = async (req, res) => {
+    try {
+        let bestSell = await Bill.aggregate([
+            { $unwind: "$items" },
+            {
+                $group: {
+                    _id: "$items.product",
+                    totalQuantity: { $sum: "$items.quantity" }
+                }
+            },
+            { $sort: { totalQuantity: -1 } },
+            { $limit: 10 }
+        ])
+
+        let productsDetail = await Product.find({ _id: { $in: bestSell.map(item => item._id) } })
+
+        let sellingProdA = bestSell.map(item => {
+            let detail = productsDetail.find(product => product._id.toString() === item._id.toString())
+            return {
+                product: detail,
+                totalQuantity: item.totalQuantity
+            }
+        })
+        return res.send(sellingProdA)
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send({ message: 'No found selling products', error: error })
+    }
+}
+
+export const getProductsCategory = async (req, res) =>{
+    try {
+        let {category} = req.body
+        let categoryExist = await Category.findOne({nameCategory: category})
+        if(!categoryExist) return res.status(404).send({message: 'Category not exist'})
+        let findProduct = await Product.find({category: categoryExist._id})
+        if(!findProduct) return res.status(404).send({message: 'fail found products'})
+        return res.send(findProduct)
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send({message: 'fail get products'})
+
+    }
 }

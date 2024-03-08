@@ -1,40 +1,37 @@
-'use strict'
-import {Schema, model} from 'mongoose'
+import { Schema, model } from "mongoose";
 
 const billSchema = Schema({
-    userBill: {
+    user: {
         type: Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'User',
         required: true
-    }, 
-    dateBill :{
-        type: Date,
-        default: Date.now,
-        required: true
-    }, 
-    products: [{
+    },
+    items: [{
         product: {
             type: Schema.Types.ObjectId,
             ref: 'product',
             required: true
-        }, 
-        amount: { 
-            type: Number, 
-            required: true 
         },
-        unit: { 
-            type: Number, 
-            required: true 
-        },
-        subTotal: { 
+        quantity: {
             type: Number,
-            required: true 
+            required: true,
+            min: 1
+        },
+        price: {
+            type: Number,
+            required: true
         }
-    }], 
-    totalPurchase: {
-        type: Number, 
+    }],
+    totalAmount: { 
+        type: Number,
         required: true 
+    },
+    date: {
+        type: Date,
+        default: Date.now
     }
-})
+},{
+    versionKey: false
+});
 
-export default model('bill', billSchema)
+export default model('Bill', billSchema);
